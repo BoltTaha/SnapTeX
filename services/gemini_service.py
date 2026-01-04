@@ -55,7 +55,7 @@ IMPORTANT RULES:
 3. For tables: Use tabular or array environments
 4. For figures/diagrams: Use TikZ if it's a diagram, or includegraphics if it's an image
 5. For question headers: Use tight spacing with rules above and below
-6. For captions: Use \captionof{figure}{...} or \caption{...} inside figure environment, italicize and center
+6. For captions: Use standard \\caption{...} inside figure environment (NOT \\captionof). Captions should be italicized and centered.
 7. ALLOWED packages: amsmath, amssymb, amsthm, geometry, graphicx, tikz, pgf
 8. AVOID packages: capt-of, fancyhdr, hyperref (unless necessary), or other non-standard packages
 9. If a sentence seems incomplete at the start or end, just transcribe it as is.
