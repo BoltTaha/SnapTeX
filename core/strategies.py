@@ -49,7 +49,28 @@ class LaTeXStrategy(OutputStrategy):
 \\usepackage[margin=1in]{{geometry}}"""
         
         if uses_tikz:
-            latex_doc += "\n\\usepackage{tikz}\n\\usetikzlibrary{shapes.multipart,arrows.meta,positioning}"
+            # Global TikZ styles for UML diagrams (prevents AI from hallucinating styles)
+            latex_doc += """
+\\usepackage{tikz}
+\\usetikzlibrary{shapes.multipart, arrows.meta, positioning}
+\\tikzset{
+    class/.style={
+        rectangle split, 
+        rectangle split parts=3, 
+        draw, 
+        align=left, 
+        text width=4cm,
+        font=\\small
+    },
+    abstract/.style={
+        class,
+        font=\\itshape
+    },
+    inheritance/.style={
+        -{Triangle[open]}, 
+        thick
+    }
+}"""
         
         if command_definitions:
             latex_doc += f"\n{command_definitions}"
