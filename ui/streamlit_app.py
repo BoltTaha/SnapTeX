@@ -170,7 +170,7 @@ def main():
                - Upload a single image (JPEG/PNG) for quick conversion
                - Upload multiple images for batch processing
             
-            2. **Select Model**: Choose between Gemini Flash (faster) or Pro (more accurate)
+            2. **Select Model**: Choose between Gemini 2.5 Flash (faster) or 2.5 Pro (more accurate)
             
             3. **Convert**: Click the "Convert to LaTeX" button
             
