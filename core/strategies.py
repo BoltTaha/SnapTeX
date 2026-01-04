@@ -49,7 +49,7 @@ class LaTeXStrategy(OutputStrategy):
 \\usepackage[margin=1in]{{geometry}}"""
         
         if uses_tikz:
-            latex_doc += "\n\\usepackage{tikz}\n\\usetikzlibrary{shapes.multipart,arrows,positioning}"
+            latex_doc += "\n\\usepackage{tikz}\n\\usetikzlibrary{shapes.multipart,arrows.meta,positioning}"
         
         if command_definitions:
             latex_doc += f"\n{command_definitions}"
@@ -148,6 +148,8 @@ class LaTeXStrategy(OutputStrategy):
             'figure', 'verb', 'verbatim', 'color', 'textcolor',
             'makeatletter', 'makeatother',
             'attribute', 'method', 'classname',  # Add these to ignore list so we don't define them twice
+            'geometry', 'hfill', 'vfill', 'hrule', 'noindent',  # Standard LaTeX formatting commands
+            'bfseries', 'itshape', 'ttfamily',  # Standard LaTeX font commands
         }
         
         # Filter out basic commands (use providecommand so it won't redefine anyway)
