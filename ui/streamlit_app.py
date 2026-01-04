@@ -204,7 +204,7 @@ def main():
                - Upload a single image (JPEG/PNG) for quick conversion
                - Upload multiple images for batch processing
             
-            2. **Convert**: Click the "Convert to LaTeX" button (using Gemini 2.5 Flash)
+            2. **Convert**: Click the "Convert to LaTeX" button
             
             4. **Download**: Download the generated LaTeX code and compiled PDF
             
