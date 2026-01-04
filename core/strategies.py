@@ -98,7 +98,8 @@ class LaTeXStrategy(OutputStrategy):
     def _detect_and_define_commands(self, content: str) -> str:
         """
         Dynamically detect undefined commands in LaTeX content and define them.
-        Generic approach - works for any LaTeX content.
+        Generic approach - works for any LaTeX content, automatically adapts.
+        Uses \providecommand so it won't redefine existing commands.
         
         Args:
             content: LaTeX content to analyze
@@ -110,11 +111,44 @@ class LaTeXStrategy(OutputStrategy):
         
         # Find all command usages (e.g., \commandname, \classname, \method, etc.)
         # Pattern: \commandname{ or \commandname  or \commandname\n
-        command_pattern = r'\\(\w+)(?=\{| |\n|$)'
+        command_pattern = r'\\(\w+)(?=\{| |\n|$|\\|,|\.|;|:|\]|\)|!)'
         commands_used = set(re.findall(command_pattern, content))
         
-        # Known LaTeX commands that don't need definition
-        standard_commands = {
+        # Very basic commands that we know are standard (avoid redefining these)
+        # Using providecommand makes this safer, but we filter these anyway
+        basic_commands = {
+            'documentclass', 'usepackage', 'begin', 'end', 'document',
+            'item', 'textbf', 'textit', 'emph', 'textsc', 'textmd',
+            'section', 'subsection', 'subsubsection', 'paragraph',
+            'caption', 'label', 'ref', 'cite', 'input', 'include',
+            'includegraphics', 'tikz', 'node', 'draw', 'fill', 'path',
+            'coordinate', 'tikzpicture', 'nodepart',
+            'newcommand', 'renewcommand', 'providecommand',
+            'math', 'text', 'mbox', 'fbox',
+            'centering', 'hspace', 'vspace',
+            'newline', 'linebreak', 'newpage', 'clearpage',
+            'par', 'rule', 'title', 'author', 'date', 'maketitle',
+            'footnote', 'equation', 'align', 'gather',
+            'frac', 'sqrt', 'sum', 'int', 'prod', 'lim',
+            'left', 'right', 'big', 'Big', 'bigg', 'Bigg',
+            'matrix', 'pmatrix', 'bmatrix', 'table', 'tabular',
+            'figure', 'verb', 'verbatim', 'color', 'textcolor',
+            'makeatletter', 'makeatother',
+        }
+        
+        # Filter out basic commands (use providecommand so it won't redefine anyway)
+        custom_commands = commands_used - basic_commands
+        
+        if not custom_commands:
+            return ""
+        
+        # Generate command definitions using \providecommand (safer - won't redefine existing)
+        definitions = ["% Auto-generated command definitions (generic)"]
+        for cmd in sorted(custom_commands):
+            # Use providecommand - only defines if not already defined
+            definitions.append(f"\\providecommand{{\\{cmd}}}[1]{{#1}}")
+        
+        return "\n".join(definitions)
             'documentclass', 'usepackage', 'begin', 'end', 'document',
             'item', 'textbf', 'textit', 'emph', 'texttt', 'textsc',
             'section', 'subsection', 'subsubsection', 'paragraph',
