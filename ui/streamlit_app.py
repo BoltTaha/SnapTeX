@@ -36,13 +36,9 @@ def main():
     with st.sidebar:
         st.header("⚙️ Settings")
         
-        # Model selection (Factory Pattern)
-        model_type = st.selectbox(
-            "Select Model",
-            ["gemini-2.5-flash", "gemini-2.5-pro"],
-            index=0,
-            help="Gemini 2.5 is the latest stable version (2026). Flash is faster, Pro is more accurate."
-        )
+        # Fixed model: Gemini 2.5 Flash
+        model_type = "gemini-2.5-flash"
+        st.info("🤖 **Model:** Gemini 2.5 Flash")
         
         st.markdown("---")
         st.markdown("### 📋 Supported Formats")
