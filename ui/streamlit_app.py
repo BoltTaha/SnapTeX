@@ -143,8 +143,13 @@ def main():
                 # Cleanup temp files
                 try:
                     import shutil
+                    # Delete uploaded files
                     if temp_dir.exists():
                         shutil.rmtree(temp_dir)
+                    # Delete extracted images from PDF processing
+                    temp_images_dir = Path("temp_images")
+                    if temp_images_dir.exists():
+                        shutil.rmtree(temp_images_dir)
                 except:
                     pass
                 
