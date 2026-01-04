@@ -50,9 +50,20 @@ class LaTeXStrategy(OutputStrategy):
         
         if uses_tikz:
             # Global TikZ styles for UML diagrams (prevents AI from hallucinating styles)
+            # Comprehensive TikZ libraries for all diagram types (UML, circuits, automata, trees, etc.)
             latex_doc += """
 \\usepackage{tikz}
-\\usetikzlibrary{shapes.multipart, arrows.meta, positioning}
+\\usepackage{pgfplots}
+\\usetikzlibrary{
+    shapes.multipart, 
+    arrows.meta, 
+    positioning, 
+    calc,           % Complex calculations ke liye
+    automata,       % State machines (q0 -> q1) ke liye
+    trees,          % Probability trees ke liye
+    patterns,       % Shading/Hatching ke liye
+    quotes          % Label on lines ke liye
+}
 \\tikzset{
     class/.style={
         rectangle split, 
