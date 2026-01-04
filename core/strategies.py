@@ -172,6 +172,7 @@ class LaTeXStrategy(OutputStrategy):
             'geometry', 'hfill', 'vfill', 'hrule', 'noindent',  # Standard LaTeX formatting commands
             'bfseries', 'itshape', 'ttfamily',  # Standard LaTeX font commands
             'tikzset', 'pgfkeysvalueof', 'sffamily', 'textbullet',  # TikZ/PGF and standard font commands
+            'hline', 'cline', 'multicolumn', 'rule', 'linewidth', 'textwidth',  # Table & formatting commands
             # Note: 'node', 'draw', 'fill', 'path', 'coordinate' already in basic_commands above
         }
         
