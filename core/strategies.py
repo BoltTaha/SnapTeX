@@ -31,28 +31,36 @@ class LaTeXStrategy(OutputStrategy):
         # Clean up content - remove problematic packages and commands
         cleaned_content = self._clean_latex_content(content)
         
-        # Wrap content in basic LaTeX document structure if not already wrapped
-        if not cleaned_content.strip().startswith("\\documentclass"):
-            # Check if TikZ is needed (tikzpicture or tikz in content)
-            uses_tikz = 'tikzpicture' in cleaned_content.lower() or '\\tikz' in cleaned_content
-            
-            latex_doc = f"""\\documentclass{{article}}
+        # Always wrap in document structure (cleaned_content is body only)
+        # Check if TikZ is needed (tikzpicture or tikz in content)
+        uses_tikz = 'tikzpicture' in cleaned_content.lower() or '\\tikz' in cleaned_content or 'nodepart' in cleaned_content.lower()
+        
+        # Define common commands that might be used in diagrams
+        common_commands = ""
+        if uses_tikz and ('\\method' in cleaned_content or '\\attribute' in cleaned_content or '\\classname' in cleaned_content):
+            common_commands = """% Define common UML diagram commands
+\\newcommand{\\classname}[1]{\\textbf{#1}}
+\\newcommand{\\attribute}[1]{\\textit{#1}}
+\\newcommand{\\method}[1]{\\textit{#1}}"""
+        
+        latex_doc = f"""\\documentclass{{article}}
 \\usepackage{{amsmath}}
 \\usepackage{{amssymb}}
 \\usepackage{{graphicx}}"""
-            
-            if uses_tikz:
-                latex_doc += "\n\\usepackage{tikz}\n\\usetikzlibrary{shapes,arrows,positioning}"
-            
-            latex_doc += f"""
+        
+        if uses_tikz:
+            latex_doc += "\n\\usepackage{tikz}\n\\usetikzlibrary{shapes.multipart,arrows,positioning}"
+        
+        if common_commands:
+            latex_doc += f"\n{common_commands}"
+        
+        latex_doc += f"""
 \\begin{{document}}
 
 {cleaned_content}
 
 \\end{{document}}"""
-            return latex_doc
-        
-        return cleaned_content
+        return latex_doc
     
     def _clean_latex_content(self, content: str) -> str:
         """
