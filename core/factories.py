@@ -25,10 +25,10 @@ class ModelFactory:
         """
         model_type = model_type.lower()
         
-        if model_type in ["gemini-flash", "gemini-1.5-flash"]:
-            return GeminiService(model_name="gemini-1.5-flash")
-        elif model_type in ["gemini-pro", "gemini-1.5-pro"]:
-            return GeminiService(model_name="gemini-1.5-pro")
+        if model_type in ["gemini-flash", "gemini-1.5-flash", "gemini-2.5-flash"]:
+            return GeminiService(model_name="gemini-2.5-flash")
+        elif model_type in ["gemini-pro", "gemini-1.5-pro", "gemini-2.5-pro"]:
+            return GeminiService(model_name="gemini-2.5-pro")
         # Future: Add GPT-4, Claude, etc.
         # elif model_type == "gpt-4o":
         #     return GPT4Service()

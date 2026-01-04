@@ -17,7 +17,7 @@ load_dotenv()
 class GeminiService(ICodeGenerator):
     """Service for generating LaTeX code using Gemini API."""
     
-    def __init__(self, model_name: str = "gemini-1.5-flash"):
+    def __init__(self, model_name: str = "gemini-2.5-flash"):
         """
         Initialize Gemini service.
         
