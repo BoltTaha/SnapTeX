@@ -54,6 +54,7 @@ class LaTeXCompiler:
             cmd = [
                 self.pdflatex_cmd,
                 "-interaction=nonstopmode",
+                "-halt-on-error",
                 "-output-directory", work_dir,
                 tex_abs_path
             ]
@@ -63,16 +64,26 @@ class LaTeXCompiler:
                 cmd,
                 capture_output=True,
                 text=True,
-                cwd=str(tex_file.parent)
+                cwd=str(tex_file.parent),
+                timeout=60  # 60 second timeout
             )
             
-            # Second compilation for references
-            subprocess.run(
-                cmd,
-                capture_output=True,
-                text=True,
-                cwd=str(tex_file.parent)
-            )
+            # Check for critical errors in first compilation
+            if result.returncode != 0:
+                error_output = result.stderr if result.stderr else result.stdout
+                # Check if it's a missing package error
+                if "missing" in error_output.lower() or "cannot find" in error_output.lower():
+                    raise Exception(f"LaTeX compilation failed: Missing package or file. Error: {error_output[:500]}")
+            
+            # Second compilation for references (only if first succeeded)
+            if result.returncode == 0:
+                subprocess.run(
+                    cmd,
+                    capture_output=True,
+                    text=True,
+                    cwd=str(tex_file.parent),
+                    timeout=60
+                )
             
             # Check if PDF was created
             # pdflatex creates PDF in output-directory with the same name as input
