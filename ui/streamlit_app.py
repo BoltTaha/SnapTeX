@@ -109,12 +109,35 @@ def main():
                     latex_path, pdf_path = converter.convert(file_input)
                 
                 progress_bar.progress(100)
-                status_text.success("✅ Conversion completed!")
+                
+                # Check if PDF compilation succeeded
+                pdf_available = pdf_path is not None and Path(pdf_path).exists()
+                
+                if pdf_available:
+                    status_text.success("✅ Conversion completed! LaTeX and PDF ready.")
+                else:
+                    status_text.warning("⚠️ LaTeX generated, but PDF compilation failed (TeX Live not installed).")
+                    with st.expander("📝 How to Install TeX Live (for PDF generation)", expanded=False):
+                        st.markdown("""
+                        **Windows:**
+                        1. Download TeX Live installer from: https://www.tug.org/texlive/
+                        2. Run the installer and follow instructions
+                        3. Verify: Run `pdflatex --version` in terminal
+                        
+                        **Alternative (Smaller):** Install MiKTeX (smaller, easier):
+                        1. Download from: https://miktex.org/download
+                        2. Install and restart the app
+                        
+                        You can still download the LaTeX file and compile it manually!
+                        """)
                 
                 # Display results
                 st.header("📥 Download Results")
                 
-                col1, col2 = st.columns(2)
+                if pdf_available:
+                    col1, col2 = st.columns(2)
+                else:
+                    col1 = st.container()
                 
                 with col1:
                     st.subheader("LaTeX Source Code")
@@ -133,18 +156,19 @@ def main():
                     with st.expander("Preview LaTeX Code"):
                         st.code(latex_content, language="latex")
                 
-                with col2:
-                    st.subheader("Compiled PDF")
-                    with open(pdf_path, "rb") as f:
-                        pdf_content = f.read()
-                    
-                    st.download_button(
-                        label="📕 Download PDF",
-                        data=pdf_content,
-                        file_name=Path(pdf_path).name,
-                        mime="application/pdf",
-                        use_container_width=True
-                    )
+                if pdf_available:
+                    with col2:
+                        st.subheader("Compiled PDF")
+                        with open(pdf_path, "rb") as f:
+                            pdf_content = f.read()
+                        
+                        st.download_button(
+                            label="📕 Download PDF",
+                            data=pdf_content,
+                            file_name=Path(pdf_path).name,
+                            mime="application/pdf",
+                            use_container_width=True
+                        )
                 
                 # Cleanup temp files
                 try:

@@ -88,8 +88,14 @@ class ConverterFacade:
             str(output_dir / f"{base_name}.tex")
         )
         
-        # Compile to PDF
-        pdf_file_path = self.latex_compiler.compile(latex_file_path)
+        # Compile to PDF (optional - may fail if TeX Live not installed)
+        pdf_file_path = None
+        try:
+            pdf_file_path = self.latex_compiler.compile(latex_file_path)
+        except Exception as e:
+            # PDF compilation failed, but LaTeX file is still available
+            pdf_file_path = None
+            print(f"Warning: PDF compilation failed: {str(e)}")
         
         return (latex_file_path, pdf_file_path)
     
