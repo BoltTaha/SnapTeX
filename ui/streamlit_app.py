@@ -185,8 +185,9 @@ def main():
                     # Delete uploaded files
                     if temp_dir.exists():
                         shutil.rmtree(temp_dir)
-                    # Delete extracted images from PDF processing
-                    temp_images_dir = Path("temp_images")
+                    # Delete extracted images from PDF processing (using session_id)
+                    unique_id = st.session_state.session_id
+                    temp_images_dir = Path(f"temp_images_{unique_id}")
                     if temp_images_dir.exists():
                         shutil.rmtree(temp_images_dir)
                 except:
