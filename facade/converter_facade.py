@@ -38,7 +38,7 @@ class ConverterFacade:
         self.output_dir = Path(f"output_{session_id}")
         self.output_dir.mkdir(exist_ok=True)
     
-    def convert(self, file_path: str | List[str], output_format: str = "latex") -> Tuple[str, str]:
+    def convert(self, file_path: str | List[str], output_format: str = "latex", progress_callback=None) -> Tuple[str, Optional[str]]:
         """
         Convert PDF/images to LaTeX and compiled PDF.
         
@@ -84,10 +84,7 @@ class ConverterFacade:
         # Format using strategy
         formatted_latex = self.strategy.format_output(combined_latex)
         
-        # Build output file
-        output_dir = Path("output")
-        output_dir.mkdir(exist_ok=True)
-        
+        # Build output file using session-specific output directory
         # Determine output filename
         if isinstance(file_path, list):
             base_name = "batch_output"
@@ -96,7 +93,7 @@ class ConverterFacade:
         
         latex_file_path = self.output_builder.build_output(
             formatted_latex,
-            str(output_dir / f"{base_name}.tex")
+            str(self.output_dir / f"{base_name}.tex")
         )
         
         # Compile to PDF (optional - may fail if TeX Live not installed)
