@@ -51,11 +51,11 @@ class GeminiService(ICodeGenerator):
 
 IMPORTANT RULES:
 1. For UML Class Diagrams: Use TikZ package with tikzpicture environment.
-   - Use 'shapes.multipart' library.
-   - Node style: rectangle split, rectangle split parts=3, draw, align=left.
+   - Use pre-defined styles: [class] for regular classes and [abstract] for abstract classes (do NOT redefine these styles).
+   - Node style: Use \\node [class] ... (the class style is already defined globally).
    - IMPORTANT: Do NOT use custom commands like \\attribute or \\method inside the node parts. Just use plain text or standard formatting like \\textbf{} / \\textit{}.
    - Use \\nodepart{two} for attributes and \\nodepart{three} for methods.
-   - Use standard arrows [-{Triangle[open]}] for inheritance.
+   - For inheritance arrows: Use pre-defined [inheritance] style. Prefer connecting child nodes to the south anchor of the parent node (e.g., (Child.north) -- (Parent.south)) for cleaner UML diagrams.
 2. For mathematical equations: Use standard math environments (equation, align, etc.)
 3. For tables: Use tabular or array environments
 4. For figures/diagrams: Use TikZ if it's a diagram, or includegraphics if it's an image
