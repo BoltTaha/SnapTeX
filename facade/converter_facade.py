@@ -34,6 +34,9 @@ class ConverterFacade:
         self.latex_compiler = LaTeXCompiler()
         self.strategy = LaTeXStrategy()
         self.max_workers = max_workers
+        # Unique output directory per session to prevent file collisions
+        self.output_dir = Path(f"output_{session_id}")
+        self.output_dir.mkdir(exist_ok=True)
     
     def convert(self, file_path: str | List[str], output_format: str = "latex") -> Tuple[str, str]:
         """
@@ -51,10 +54,16 @@ class ConverterFacade:
         
         # Process images (parallel for multiple, single for one)
         if len(image_data) > 1:
-            results = self._process_parallel(image_data)
+            results = self._process_parallel(image_data, progress_callback)
+            # Final progress update
+            if progress_callback:
+                progress_callback(1.0)
         else:
             results = self._process_single(image_data[0])
             results = [results]
+            # Single item progress
+            if progress_callback:
+                progress_callback(1.0)
         
         # ⚠️ CRITICAL: Sort results by index to maintain correct order
         # Threads finish asynchronously - Page 2 might finish before Page 1
@@ -125,7 +134,7 @@ class ConverterFacade:
             'type': img_type
         }
     
-    def _process_parallel(self, image_data_list: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+    def _process_parallel(self, image_data_list: List[Dict[str, Any]], progress_callback=None) -> List[Dict[str, Any]]:
         """
         Process multiple images in parallel.
         

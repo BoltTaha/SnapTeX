@@ -95,9 +95,13 @@ def main():
                 # Initialize facade with session_id
                 converter = ConverterFacade(model_type=model_type, session_id=unique_id)
                 
-                # Progress bar
-                progress_bar = st.progress(0)
+                # Progress bar with text
+                progress_bar = st.progress(0, text="Starting conversion...")
                 status_text = st.empty()
+                
+                # Progress callback function
+                def update_progress(progress):
+                    progress_bar.progress(progress, text=f"Processing... {int(progress * 100)}% complete")
                 
                 # Show processing status
                 if file_type == "PDF":
