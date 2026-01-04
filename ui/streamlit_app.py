@@ -36,11 +36,9 @@ def main():
     with st.sidebar:
         st.header("⚙️ Settings")
         
-        # Fixed model: Gemini 2.5 Flash
+        # Fixed model: Gemini 2.5 Flash (not shown to user)
         model_type = "gemini-2.5-flash"
-        st.info("🤖 **Model:** Gemini 2.5 Flash")
         
-        st.markdown("---")
         st.markdown("### 📋 Supported Formats")
         st.markdown("- **PDF**: Multi-page documents")
         st.markdown("- **Images**: JPEG, PNG")
