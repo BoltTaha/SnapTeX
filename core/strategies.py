@@ -36,8 +36,13 @@ class LaTeXStrategy(OutputStrategy):
         uses_tikz = 'tikzpicture' in cleaned_content.lower() or '\\tikz' in cleaned_content or 'nodepart' in cleaned_content.lower()
         
         # Define common commands that might be used in diagrams
+        # Check for commands (with or without spaces - fix typos like \class name)
+        needs_classname = '\\classname' in cleaned_content or '\\class name' in cleaned_content or '\\classname{' in cleaned_content.lower()
+        needs_attribute = '\\attribute' in cleaned_content or '\\attribute{' in cleaned_content.lower()
+        needs_method = '\\method' in cleaned_content or '\\method{' in cleaned_content.lower()
+        
         common_commands = ""
-        if uses_tikz and ('\\method' in cleaned_content or '\\attribute' in cleaned_content or '\\classname' in cleaned_content):
+        if uses_tikz and (needs_classname or needs_attribute or needs_method):
             common_commands = """% Define common UML diagram commands
 \\newcommand{\\classname}[1]{\\textbf{#1}}
 \\newcommand{\\attribute}[1]{\\textit{#1}}
@@ -88,6 +93,11 @@ class LaTeXStrategy(OutputStrategy):
             # Remove problematic commands that require missing packages
             if any(cmd in line for cmd in ['\\fancyhead', '\\hypersetup']):
                 continue
+            
+            # Fix common typos: \class name -> \classname (remove space)
+            line = line.replace('\\class name{', '\\classname{')
+            line = line.replace('\\class name ', '\\classname ')
+            line = line.replace('\\class name\n', '\\classname\n')
             
             # Add all other lines to body
             body_lines.append(line)
