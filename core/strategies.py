@@ -28,20 +28,64 @@ class LaTeXStrategy(OutputStrategy):
         Returns:
             Formatted LaTeX document
         """
+        # Clean up content - remove problematic packages and commands
+        cleaned_content = self._clean_latex_content(content)
+        
         # Wrap content in basic LaTeX document structure if not already wrapped
-        if not content.strip().startswith("\\documentclass"):
+        if not cleaned_content.strip().startswith("\\documentclass"):
             latex_doc = f"""\\documentclass{{article}}
 \\usepackage{{amsmath}}
 \\usepackage{{amssymb}}
 \\usepackage{{graphicx}}
 \\begin{{document}}
 
-{content}
+{cleaned_content}
 
 \\end{{document}}"""
             return latex_doc
         
-        return content
+        return cleaned_content
+    
+    def _clean_latex_content(self, content: str) -> str:
+        """
+        Clean LaTeX content by removing problematic packages and commands.
+        
+        Args:
+            content: Raw LaTeX content
+            
+        Returns:
+            Cleaned LaTeX content
+        """
+        lines = content.split('\n')
+        cleaned_lines = []
+        
+        # Allowed packages (standard, commonly available)
+        allowed_packages = {
+            'amsmath', 'amssymb', 'amsthm', 'graphicx', 'geometry', 
+            'inputenc', 'fontenc', 'babel', 'xcolor', 'listings'
+        }
+        
+        for line in lines:
+            # Remove problematic usepackage commands
+            if '\\usepackage' in line.lower():
+                # Check if it's an allowed package
+                package_used = False
+                for pkg in allowed_packages:
+                    if pkg in line.lower():
+                        cleaned_lines.append(line)
+                        package_used = True
+                        break
+                # If not allowed package, skip this line
+                if not package_used:
+                    continue
+            # Remove problematic commands that require missing packages
+            elif any(cmd in line for cmd in ['\\captionof', '\\fancyhead', '\\hypersetup']):
+                # Skip lines with problematic commands
+                continue
+            else:
+                cleaned_lines.append(line)
+        
+        return '\n'.join(cleaned_lines)
 
 
 class MarkdownStrategy(OutputStrategy):

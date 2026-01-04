@@ -48,9 +48,13 @@ class GeminiService(ICodeGenerator):
         """
         # Context loss handling prompt (MVP solution)
         prompt = """Convert this image to LaTeX code. 
-        
-If a sentence seems incomplete at the start or end, just transcribe it as is.
-Return only the LaTeX code without any explanations or markdown formatting."""
+
+IMPORTANT RULES:
+1. Use ONLY standard LaTeX packages: amsmath, amssymb, amsthm, geometry, graphicx
+2. DO NOT use packages like: capt-of, fancyhdr, hyperref, or any other non-standard packages
+3. Use basic LaTeX commands only (no custom packages)
+4. If a sentence seems incomplete at the start or end, just transcribe it as is.
+5. Return only the LaTeX code without any explanations, markdown formatting, or \\documentclass/\\begin{document} tags (just the content)."""
         
         for attempt in range(self.max_retries):
             try:
