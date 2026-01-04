@@ -11,6 +11,7 @@ sys.path.insert(0, str(project_root))
 
 import streamlit as st
 import os
+import uuid
 from typing import List
 from facade.converter_facade import ConverterFacade
 
@@ -22,6 +23,10 @@ def main():
         page_icon="📄",
         layout="wide"
     )
+    
+    # Initialize unique session ID for temp file isolation
+    if 'session_id' not in st.session_state:
+        st.session_state.session_id = str(uuid.uuid4())
     
     st.title("📄 SnapTeX")
     st.markdown("### Convert PDFs and Images to LaTeX Code")
@@ -67,8 +72,9 @@ def main():
             file_type = "Batch Images"
             st.info(f"🖼️ {len(uploaded_files)} images detected for batch processing")
         
-        # Save uploaded files temporarily
-        temp_dir = Path("temp_uploads")
+        # Save uploaded files temporarily with unique session ID
+        unique_id = st.session_state.session_id
+        temp_dir = Path(f"temp_uploads_{unique_id}")
         temp_dir.mkdir(exist_ok=True)
         
         saved_paths = []

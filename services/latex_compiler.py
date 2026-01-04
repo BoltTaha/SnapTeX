@@ -65,7 +65,7 @@ class LaTeXCompiler:
                 capture_output=True,
                 text=True,
                 cwd=str(tex_file.parent),
-                timeout=60  # 60 second timeout
+                timeout=180  # 180 second timeout (3 minutes) for large compilations
             )
             
             # Check for critical errors in first compilation
@@ -82,7 +82,7 @@ class LaTeXCompiler:
                     capture_output=True,
                     text=True,
                     cwd=str(tex_file.parent),
-                    timeout=60
+                    timeout=180  # 180 second timeout (3 minutes) for large compilations
                 )
             
             # Check if PDF was created

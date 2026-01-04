@@ -4,9 +4,11 @@ Single Responsibility: ONLY loads images from PDF, single images, or batch image
 """
 
 import os
+import time
 from typing import List, Dict, Any
 from pathlib import Path
 from pdf2image import convert_from_path
+from pdf2image.exceptions import PDFInfoNotInstalledError
 from PIL import Image
 from core.interfaces import IImageLoader
 
@@ -53,9 +55,11 @@ class ImageLoader(IImageLoader):
             # Convert PDF to images
             images = convert_from_path(pdf_path)
             
-            # Save images temporarily and return paths
+            # Save images temporarily with unique folder to avoid collisions
             pdf_name = Path(pdf_path).stem
-            temp_dir = Path("temp_images")
+            # Use timestamp-based unique folder to avoid multi-user collisions
+            unique_id = int(time.time() * 1000)  # milliseconds for uniqueness
+            temp_dir = Path(f"temp_images_{unique_id}")
             temp_dir.mkdir(exist_ok=True)
             
             result = []
@@ -72,6 +76,9 @@ class ImageLoader(IImageLoader):
             
             return result
             
+        except PDFInfoNotInstalledError:
+            # User-friendly error message for missing Poppler
+            raise Exception("Poppler is not installed or not in PATH. Please install Poppler to process PDFs. See README.md for installation instructions.")
         except Exception as e:
             raise Exception(f"Failed to load PDF images: {str(e)}")
     

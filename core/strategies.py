@@ -42,7 +42,11 @@ class LaTeXStrategy(OutputStrategy):
         latex_doc = f"""\\documentclass{{article}}
 \\usepackage{{amsmath}}
 \\usepackage{{amssymb}}
-\\usepackage{{graphicx}}"""
+\\usepackage{{amsfonts}}
+\\usepackage{{mathrsfs}}
+\\usepackage{{graphicx}}
+\\usepackage{{float}}
+\\usepackage[margin=1in]{{geometry}}"""
         
         if uses_tikz:
             latex_doc += "\n\\usepackage{tikz}\n\\usetikzlibrary{shapes.multipart,arrows,positioning}"

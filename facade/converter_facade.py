@@ -3,6 +3,7 @@ Facade Pattern - ConverterFacade hides complexity from user.
 """
 
 import os
+import time
 from typing import List, Dict, Any, Tuple
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
@@ -136,11 +137,16 @@ class ConverterFacade:
         results = []
         
         with ThreadPoolExecutor(max_workers=self.max_workers) as executor:
-            # Submit all tasks
-            future_to_data = {
-                executor.submit(self._process_single, img_data): img_data
-                for img_data in image_data_list
-            }
+            # Submit all tasks with delay to avoid rate limiting
+            future_to_data = {}
+            for img_data in image_data_list:
+                # Submit task
+                future = executor.submit(self._process_single, img_data)
+                future_to_data[future] = img_data
+                
+                # Add delay between submissions to avoid rate limit bombing
+                # This spaces out requests so they don't hit API simultaneously
+                time.sleep(1.5)
             
             # Collect results as they complete
             for future in as_completed(future_to_data):
