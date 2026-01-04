@@ -142,6 +142,7 @@ class ConverterFacade:
             List of dictionaries with LaTeX code and metadata
         """
         results = []
+        total_images = len(image_data_list)  # Total count for percentage calculation
         
         with ThreadPoolExecutor(max_workers=self.max_workers) as executor:
             # Submit all tasks with delay to avoid rate limiting
@@ -155,7 +156,8 @@ class ConverterFacade:
                 # This spaces out requests so they don't hit API simultaneously
                 time.sleep(1.5)
             
-            # Collect results as they complete
+            # Collect results as they complete (Updated loop with progress)
+            completed_count = 0
             for future in as_completed(future_to_data):
                 try:
                     result = future.result()
@@ -171,6 +173,13 @@ class ConverterFacade:
                         'image_index': img_data.get('index') if img_data.get('type') != 'pdf_page' else None,
                         'type': img_data.get('type', 'unknown')
                     })
+                
+                # Update progress bar here
+                completed_count += 1
+                if progress_callback:
+                    # Calculate progress (0.0 to 1.0)
+                    progress = completed_count / total_images
+                    progress_callback(progress)
         
         return results
 
