@@ -28,9 +28,9 @@ def main():
         # Model selection (Factory Pattern)
         model_type = st.selectbox(
             "Select Model",
-            ["gemini-flash", "gemini-pro"],
+            ["gemini-2.5-flash", "gemini-2.5-pro"],
             index=0,
-            help="Choose the AI model for conversion"
+            help="Gemini 2.5 is the latest stable version (2026). Flash is faster, Pro is more accurate."
         )
         
         st.markdown("---")
