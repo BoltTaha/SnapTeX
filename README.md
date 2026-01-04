@@ -1,204 +1,307 @@
-# SnapTeX - PDF/Image to LaTeX Converter
+# SnapTeX 📸➡️📝
 
-Convert PDFs and images (JPEG, PNG) to LaTeX code using AI-powered Gemini models.
+> **Turn Chaos into Code.** Instantly convert handwritten notes, equations, and diagrams into clean, compilable LaTeX & PDF documents using AI.
 
-## Features
+[![Python](https://img.shields.io/badge/Python-3.8%2B-blue?style=for-the-badge&logo=python)](https://www.python.org/)
+[![Streamlit](https://img.shields.io/badge/Frontend-Streamlit-red?style=for-the-badge&logo=streamlit)](https://streamlit.io/)
+[![Gemini AI](https://img.shields.io/badge/AI-Gemini%202.5-purple?style=for-the-badge)](https://ai.google.dev/)
+[![License](https://img.shields.io/badge/License-Proprietary-orange?style=for-the-badge)](LICENSE)
 
-- ✅ **Bulk Processing**: Convert entire PDFs at once (all pages in parallel)
-- ✅ **Flexible Input**: Support for PDF, single images, and batch images
-- ✅ **AI-Powered**: Intelligent context repair and error correction
-- ✅ **Parallel Processing**: Fast conversion using multi-threading
-- ✅ **Clean Output**: Structured LaTeX code ready for compilation
-- ✅ **SOLID Principles**: Production-ready architecture
+---
 
-## Architecture
+## 🚀 What is SnapTeX?
 
-This project follows **SOLID Principles** and implements **Design Patterns**:
+**SnapTeX** is an intelligent digitization tool designed for students and researchers. Unlike standard OCR tools that just copy text, SnapTeX **understands context**. It takes your messy handwritten notes (PDFs or Images) and transforms them into professional, structured **LaTeX code**.
 
-- **SOLID Principles**: Single Responsibility, Open/Closed, Dependency Inversion
-- **Design Patterns**: Factory, Strategy, Facade
-- **Modular Structure**: Core interfaces, services, facade, and UI layers
+Whether it's a complex **UML Class Diagram**, a messy **Calculus equation**, or a full page of text, SnapTeX digitizes it in seconds.
 
-## Installation
+### ✨ Key Features
+
+- **📚 Bulk Processing Engine:** Upload an entire 50-page PDF notebook, and SnapTeX processes all pages in parallel using multi-threading.
+- **🧠 Intelligent Correction:** AI automatically fixes handwriting errors (e.g., correcting "Pythogoras" to "Pythagoras") and closes unclosed brackets in math equations.
+- **📊 Diagram to Code:** Converts hand-drawn sketches (Flowcharts, UML) directly into **TikZ** code.
+- **⚡ High-Speed Architecture:** Built with a parallel processing pipeline that respects API rate limits while maximizing throughput.
+- **🛡️ Session Isolation:** Fully supports multiple concurrent users with isolated temporary storage (no file collisions).
+- **🔄 Multiple Input Formats:** Supports PDF files, single images (JPEG, PNG), or batch image processing.
+- **📄 LaTeX & PDF Output:** Generates both `.tex` source code and compiled `.pdf` files.
+
+---
+
+## 🏗️ Engineering & Architecture
+
+SnapTeX is built with **Scalability** and **Maintainability** in mind, strictly following **SOLID Principles** and standard **Design Patterns**:
+
+| Pattern | Implementation | Purpose |
+| :--- | :--- | :--- |
+| **Facade Pattern** | `ConverterFacade` | Hides the complexity of image loading, AI processing, and PDF compilation behind a single interface. |
+| **Factory Pattern** | `ModelFactory` | Allows instant switching between AI models (Gemini Flash vs. Pro) without changing core logic. |
+| **Strategy Pattern** | `LaTeXStrategy` | Enables easy extension to other output formats (Markdown, HTML) in the future. |
+| **SRP (SOLID)** | `Service Layer` | Each service (PDF Processing, API Call, File Saving) handles exactly one responsibility. |
+| **DIP (SOLID)** | `Interfaces` | High-level modules depend on abstractions (ICodeGenerator, IImageLoader), not concrete implementations. |
+
+### 📁 Project Structure
+
+```
+SnapTeX/
+├── core/                      # Core abstractions and patterns
+│   ├── interfaces.py          # Abstract base classes (ICodeGenerator, IImageLoader, etc.)
+│   ├── factories.py           # Factory Pattern (ModelFactory)
+│   └── strategies.py          # Strategy Pattern (LaTeXStrategy)
+├── services/                  # Service layer (SRP compliance)
+│   ├── gemini_service.py      # Gemini API integration
+│   ├── pdf_processor.py       # Image loading from PDF/images
+│   ├── output_builder.py      # LaTeX file generation
+│   └── latex_compiler.py      # PDF compilation
+├── facade/                    # Facade Pattern
+│   └── converter_facade.py    # High-level conversion interface
+├── ui/                        # User interface
+│   └── streamlit_app.py       # Streamlit web application
+├── main.py                    # Application entry point
+├── requirements.txt           # Python dependencies
+├── packages.txt               # System dependencies (for Streamlit Cloud)
+└── README.md                  # This file
+```
+
+---
+
+## 🛠️ Installation Guide
 
 ### Prerequisites
 
+Before running, ensure you have these installed on your system:
+
 1. **Python 3.8+**
-2. **TeX Live** (for LaTeX compilation)
-3. **Poppler** (for PDF to image conversion)
+2. **Poppler** (Required for processing PDFs)
+3. **TeX Live / MiKTeX** (Required for generating compiled PDFs - optional, LaTeX code works without it)
 
-### Step 1: Install Poppler (Required)
-
-#### Windows:
-
-1. Download Poppler from: https://github.com/oschwartz10612/poppler-windows/releases
-2. Extract the ZIP file to a location (e.g., `C:\poppler`)
-3. Add Poppler's `bin` folder to your system PATH:
-   - Open System Properties → Environment Variables
-   - Edit "Path" variable
-   - Add: `C:\poppler\Library\bin` (or your extraction path)
-4. Verify installation:
-   ```bash
-   pdftoppm -h
-   ```
-
-#### Linux:
+### Step 1: Clone & Setup
 
 ```bash
-sudo apt-get install poppler-utils
-```
+# Clone the repository
+git clone https://github.com/BoltTaha/SnapTeX.git
+cd SnapTeX
 
-#### macOS:
+# Create virtual environment
+python -m venv venv
 
-```bash
-brew install poppler
-```
+# Activate virtual environment
+# On Windows:
+venv\Scripts\activate
+# On Linux/Mac:
+source venv/bin/activate
 
-#### Streamlit Cloud:
-
-Create a `packages.txt` file (already included) with:
-```
-poppler-utils
-```
-
-### Step 2: Install TeX Live
-
-#### Windows:
-
-1. Download TeX Live installer from: https://www.tug.org/texlive/
-2. Run the installer and follow instructions
-3. Verify installation:
-   ```bash
-   pdflatex --version
-   ```
-
-#### Linux:
-
-```bash
-sudo apt-get install texlive-full
-```
-
-#### macOS:
-
-```bash
-brew install --cask mactex
-```
-
-### Step 3: Install Python Dependencies
-
-```bash
+# Install Python dependencies
 pip install -r requirements.txt
 ```
 
-### Step 4: Set Up Environment Variables
+### Step 2: System Dependencies
 
-1. Copy `.env.example` to `.env`:
+#### 🪟 Windows Users
+
+**1. Install Poppler:**
+- Download from [Poppler Releases](https://github.com/oschwartz10612/poppler-windows/releases)
+- Extract the zip file to a location like `C:\Program Files\poppler`
+- Add the `bin` folder (e.g., `C:\Program Files\poppler\bin`) to your System **PATH**
+- Restart your terminal/IDE after adding to PATH
+- Verify: Run `pdftoppm -h` in terminal (should show help text)
+
+**2. Install LaTeX (Optional - for PDF compilation):**
+- Download and install [MiKTeX](https://miktex.org/download) (Recommended for Windows)
+- Or install [TeX Live](https://www.tug.org/texlive/)
+- Restart your terminal after installation
+- Verify: Run `pdflatex --version` in terminal
+
+#### 🐧 Linux Users
+
+```bash
+# Ubuntu/Debian
+sudo apt-get update
+sudo apt-get install poppler-utils texlive-full
+
+# Verify Poppler
+pdftoppm -h
+
+# Verify LaTeX
+pdflatex --version
+```
+
+#### 🍎 macOS Users
+
+```bash
+# Using Homebrew
+brew install poppler mactex
+
+# Verify Poppler
+pdftoppm -h
+
+# Verify LaTeX
+pdflatex --version
+```
+
+### Step 3: API Key Configuration
+
+1. **Get your free API Key:**
+   - Visit [Google AI Studio](https://aistudio.google.com/)
+   - Sign in with your Google account
+   - Click "Get API Key" and create a new key
+
+2. **Configure the API Key:**
+   - Create a `.env` file in the root directory:
    ```bash
+   # Copy the example file (if available)
    cp .env.example .env
    ```
 
-2. Get your Gemini API key from: https://makersuite.google.com/app/apikey
-
-3. Add your API key to `.env`:
-   ```
-   GEMINI_API_KEY=your_api_key_here
+   - Open `.env` and add your key:
+   ```env
+   GEMINI_API_KEY=your_actual_api_key_here
    ```
 
-## Usage
+   - **Important:** Never commit the `.env` file to version control (it's already in `.gitignore`)
 
-### Run the Application
+---
+
+## 🏃‍♂️ How to Run
+
+Launch the application with one command:
 
 ```bash
 streamlit run ui/streamlit_app.py
 ```
 
-Or use the main entry point:
+The application will start and open in your browser at `http://localhost:8501`.
 
-```bash
-python main.py
-```
+### Usage Instructions
 
-### Using the UI
+1. **Upload Files:**
+   - Drag & drop your PDF file, single image (JPEG, PNG), or multiple images
+   - Supported formats: PDF, JPEG, PNG
 
-1. **Upload Files**:
-   - Upload a PDF file for multi-page conversion
-   - Upload a single image (JPEG/PNG) for quick conversion
-   - Upload multiple images for batch processing
+2. **Select Model:**
+   - Choose **Gemini 2.5 Flash** for speed (recommended for most cases)
+   - Choose **Gemini 2.5 Pro** for complex handwriting or diagrams (slower but more accurate)
 
-2. **Select Model**: Choose between Gemini Flash (faster) or Pro (more accurate)
+3. **Convert:**
+   - Click the "🚀 Convert to LaTeX" button
+   - Wait for processing (progress will be shown)
 
-3. **Convert**: Click "Convert to LaTeX" button
+4. **Download:**
+   - Download the `.tex` source code file
+   - Download the compiled `.pdf` file (if TeX Live/MiKTeX is installed)
 
-4. **Download**: Download the generated LaTeX code and compiled PDF
+---
 
-## Project Structure
+## 🐞 Troubleshooting
 
-```
-SnapTeX/
-├── core/
-│   ├── interfaces.py      # Abstract base classes (SOLID)
-│   ├── factories.py       # Factory Pattern
-│   └── strategies.py      # Strategy Pattern
-├── services/
-│   ├── gemini_service.py  # Gemini API integration
-│   ├── pdf_processor.py   # Image loading (PDF/images)
-│   ├── output_builder.py  # LaTeX file creation
-│   └── latex_compiler.py  # LaTeX to PDF compilation
-├── facade/
-│   └── converter_facade.py  # Facade Pattern
-├── ui/
-│   └── streamlit_app.py   # Streamlit UI
-├── main.py                # Entry point
-├── requirements.txt       # Python dependencies
-├── packages.txt          # System dependencies (Streamlit Cloud)
-└── README.md            # This file
-```
+### Error: `Poppler is not installed or not in PATH`
 
-## Technical Details
+**Solution:**
+- Ensure Poppler is installed (see Installation Guide)
+- Verify the `bin` folder is added to your System PATH
+- Restart your terminal/IDE after adding to PATH
+- Test with: `pdftoppm -h` (should show help text)
 
-### Parallel Processing
+### Error: `pdflatex not found. Please install TeX Live.`
 
-- PDF pages and batch images are processed in parallel (4 threads)
-- Results are automatically sorted to maintain correct order
-- Single images are processed sequentially (no parallelization needed)
-
-### Context Loss Handling (MVP)
-
-Since pages/images are processed in parallel, context between them is lost. The MVP solution includes a prompt instruction to handle incomplete sentences at page boundaries.
-
-### Ordering Fix
-
-Threads finish asynchronously, so results are sorted by page/image number before final output to ensure correct order.
-
-## Troubleshooting
-
-### Poppler Not Found
-
-- **Windows**: Ensure Poppler's `bin` folder is in your PATH
-- **Streamlit Cloud**: Ensure `packages.txt` contains `poppler-utils`
-- Verify: Run `pdftoppm -h` in terminal
-
-### TeX Live Not Found
-
-- Ensure TeX Live is installed and `pdflatex` is in PATH
+**Solution:**
+- You can still download the `.tex` file! This error just means SnapTeX couldn't compile the PDF locally
+- Install TeX Live or MiKTeX (see Installation Guide)
 - Verify: Run `pdflatex --version` in terminal
+- Or compile manually: Use online LaTeX editors like [Overleaf](https://www.overleaf.com/)
 
-### API Key Error
+### Error: `429 Too Many Requests`
 
-- Ensure `.env` file exists with `GEMINI_API_KEY` set
-- Get API key from: https://makersuite.google.com/app/apikey
+**Solution:**
+- SnapTeX has a built-in rate limiter and retry mechanism
+- The free API tier has rate limits
+- Wait for a minute and try again
+- Consider upgrading to a paid API tier for higher limits
 
-## License
+### Error: `GEMINI_API_KEY not found in environment variables`
 
-Copyright (c) 2026 SnapTeX
-All Rights Reserved.
+**Solution:**
+- Ensure you created a `.env` file in the root directory
+- Check that the `.env` file contains: `GEMINI_API_KEY=your_key_here`
+- Verify there are no spaces around the `=` sign
+- Restart the application after creating/editing `.env`
 
-NOTICE: All information contained herein is, and remains the property of SnapTeX.
-The intellectual and technical concepts contained herein are proprietary to SnapTeX
-and are protected by trade secret or copyright law. Dissemination of this information
-or reproduction of this material is strictly forbidden unless prior written permission
-is obtained from SnapTeX.
-## Contributing
+### LaTeX Compilation Errors
 
+**Solution:**
+- Most LaTeX errors are handled automatically by SnapTeX
+- If compilation fails, download the `.tex` file and compile manually
+- Common issues:
+  - Missing packages (usually auto-handled)
+  - Complex diagrams may need manual tweaking
+  - Use online LaTeX editors for debugging
 
+---
 
+## 🚀 Features in Detail
+
+### Bulk Processing
+Process entire PDFs with multiple pages simultaneously. SnapTeX uses parallel processing to handle multiple pages concurrently, significantly reducing processing time.
+
+### Intelligent Context Repair
+The AI model doesn't just transcribe - it understands context and fixes common errors:
+- Spelling corrections (handwriting errors)
+- Mathematical notation fixes
+- Structural improvements
+
+### Diagram Recognition
+Advanced support for:
+- UML Class Diagrams (converted to TikZ)
+- Flowcharts and diagrams
+- Mathematical equations and formulas
+- Tables and structured data
+
+### Session Management
+Each user session has isolated temporary storage, preventing file collisions in multi-user environments. Temp files are automatically cleaned up after processing.
+
+---
+
+## 📚 Technology Stack
+
+- **Frontend:** Streamlit (Python web framework)
+- **AI/ML:** Google Gemini 2.5 (Flash & Pro models)
+- **PDF Processing:** pdf2image, Poppler
+- **Image Processing:** Pillow (PIL)
+- **LaTeX Compilation:** TeX Live / MiKTeX
+- **Language:** Python 3.8+
+
+---
+
+## 🔒 License
+
+**© 2026 SnapTeX. All Rights Reserved.**
+
+This project is proprietary software. Unauthorized copying, modification, distribution, or use of this source code is strictly prohibited.
+
+---
+
+## 👨‍💻 Author
+
+Built with ❤️ by a CS Student @ FAST
+
+---
+
+## 🤝 Contributing
+
+This is a proprietary project. Contributions are not currently accepted. However, suggestions and feedback are welcome!
+
+---
+
+## 📝 Changelog
+
+### Version 1.0.0 (2026)
+- Initial release
+- Support for PDF, single images, and batch image processing
+- Gemini 2.5 Flash & Pro model integration
+- Parallel processing with rate limiting
+- Session-based temp file management
+- LaTeX compilation support
+- Streamlit web interface
+
+---
+
+**Happy Converting! 🚀**
