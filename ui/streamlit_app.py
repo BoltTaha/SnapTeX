@@ -95,8 +95,11 @@ def main():
         # Process button
         if st.button("🚀 Convert to LaTeX", type="primary", use_container_width=True):
             try:
-                # Initialize facade
-                converter = ConverterFacade(model_type=model_type)
+                # Get unique session ID for temp folder isolation
+                unique_id = st.session_state.session_id
+                
+                # Initialize facade with session_id
+                converter = ConverterFacade(model_type=model_type, session_id=unique_id)
                 
                 # Progress bar
                 progress_bar = st.progress(0)

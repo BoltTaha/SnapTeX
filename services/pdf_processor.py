@@ -18,6 +18,15 @@ class ImageLoader(IImageLoader):
     
     SUPPORTED_IMAGE_FORMATS = {'.jpg', '.jpeg', '.png', '.JPG', '.JPEG', '.PNG'}
     
+    def __init__(self, session_id: str = "default"):
+        """
+        Initialize ImageLoader.
+        
+        Args:
+            session_id: Unique session ID for temp folder isolation (default: "default")
+        """
+        self.session_id = session_id
+    
     def load_images(self, source: str | List[str]) -> List[Dict[str, Any]]:
         """
         Load images from source (PDF, single image, or batch of images).
@@ -55,11 +64,10 @@ class ImageLoader(IImageLoader):
             # Convert PDF to images
             images = convert_from_path(pdf_path)
             
-            # Save images temporarily with unique folder to avoid collisions
+            # Save images temporarily with session-specific folder to avoid collisions
             pdf_name = Path(pdf_path).stem
-            # Use timestamp-based unique folder to avoid multi-user collisions
-            unique_id = int(time.time() * 1000)  # milliseconds for uniqueness
-            temp_dir = Path(f"temp_images_{unique_id}")
+            # Use session_id to match UI's temp folder structure
+            temp_dir = Path(f"temp_images_{self.session_id}")
             temp_dir.mkdir(exist_ok=True)
             
             result = []

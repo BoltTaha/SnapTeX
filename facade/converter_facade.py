@@ -19,16 +19,17 @@ from core.interfaces import ICodeGenerator, IImageLoader, IOutputBuilder
 class ConverterFacade:
     """Facade for converting PDF/images to LaTeX/PDF."""
     
-    def __init__(self, model_type: str = "gemini-flash", max_workers: int = 4):
+    def __init__(self, model_type: str = "gemini-flash", max_workers: int = 4, session_id: str = "default"):
         """
         Initialize converter facade.
         
         Args:
             model_type: Type of model to use (default: "gemini-flash")
             max_workers: Maximum number of parallel workers (default: 4)
+            session_id: Unique session ID for temp folder isolation (default: "default")
         """
         self.model: ICodeGenerator = ModelFactory.get_model(model_type)
-        self.image_loader: IImageLoader = ImageLoader()
+        self.image_loader: IImageLoader = ImageLoader(session_id=session_id)
         self.output_builder: IOutputBuilder = LaTeXBuilder()
         self.latex_compiler = LaTeXCompiler()
         self.strategy = LaTeXStrategy()
