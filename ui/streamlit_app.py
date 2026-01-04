@@ -111,9 +111,9 @@ def main():
                 else:
                     status_text.info(f"🖼️ Processing {len(uploaded_files)} images in parallel...")
                 
-                # Convert
+                # Convert with progress callback
                 with st.spinner("Converting..."):
-                    latex_path, pdf_path = converter.convert(file_input)
+                    latex_path, pdf_path = converter.convert(file_input, progress_callback=update_progress)
                 
                 progress_bar.progress(100)
                 
