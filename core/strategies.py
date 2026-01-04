@@ -35,18 +35,9 @@ class LaTeXStrategy(OutputStrategy):
         # Check if TikZ is needed (tikzpicture or tikz in content)
         uses_tikz = 'tikzpicture' in cleaned_content.lower() or '\\tikz' in cleaned_content or 'nodepart' in cleaned_content.lower()
         
-        # Define common commands that might be used in diagrams
-        # Check for commands (with or without spaces - fix typos like \class name)
-        needs_classname = '\\classname' in cleaned_content or '\\class name' in cleaned_content or '\\classname{' in cleaned_content.lower()
-        needs_attribute = '\\attribute' in cleaned_content or '\\attribute{' in cleaned_content.lower()
-        needs_method = '\\method' in cleaned_content or '\\method{' in cleaned_content.lower()
-        
-        common_commands = ""
-        if uses_tikz and (needs_classname or needs_attribute or needs_method):
-            common_commands = """% Define common UML diagram commands
-\\newcommand{\\classname}[1]{\\textbf{#1}}
-\\newcommand{\\attribute}[1]{\\textit{#1}}
-\\newcommand{\\method}[1]{\\textit{#1}}"""
+        # Dynamically detect undefined commands and define them
+        # This makes it generic - works for any LaTeX content
+        command_definitions = self._detect_and_define_commands(cleaned_content)
         
         latex_doc = f"""\\documentclass{{article}}
 \\usepackage{{amsmath}}
@@ -56,8 +47,8 @@ class LaTeXStrategy(OutputStrategy):
         if uses_tikz:
             latex_doc += "\n\\usepackage{tikz}\n\\usetikzlibrary{shapes.multipart,arrows,positioning}"
         
-        if common_commands:
-            latex_doc += f"\n{common_commands}"
+        if command_definitions:
+            latex_doc += f"\n{command_definitions}"
         
         latex_doc += f"""
 \\begin{{document}}
@@ -103,6 +94,141 @@ class LaTeXStrategy(OutputStrategy):
             body_lines.append(line)
         
         return '\n'.join(body_lines)
+    
+    def _detect_and_define_commands(self, content: str) -> str:
+        """
+        Dynamically detect undefined commands in LaTeX content and define them.
+        Generic approach - works for any LaTeX content.
+        
+        Args:
+            content: LaTeX content to analyze
+            
+        Returns:
+            Command definitions string (empty if no commands needed)
+        """
+        import re
+        
+        # Find all command usages (e.g., \commandname, \classname, \method, etc.)
+        # Pattern: \commandname{ or \commandname  or \commandname\n
+        command_pattern = r'\\(\w+)(?=\{| |\n|$)'
+        commands_used = set(re.findall(command_pattern, content))
+        
+        # Known LaTeX commands that don't need definition
+        standard_commands = {
+            'documentclass', 'usepackage', 'begin', 'end', 'document',
+            'item', 'textbf', 'textit', 'emph', 'texttt', 'textsc',
+            'section', 'subsection', 'subsubsection', 'paragraph',
+            'caption', 'label', 'ref', 'cite', 'input', 'include',
+            'includegraphics', 'tikz', 'node', 'draw', 'fill', 'path',
+            'coordinate', 'tikzpicture', 'pgfpicture', 'pgfsetcolor',
+            'pgfusepath', 'pgfpath', 'pgfpoint', 'pgfkeys',
+            'newcommand', 'renewcommand', 'def', 'newcommand', 
+            'providecommand', 'DeclareRobustCommand',
+            'math', 'text', 'mbox', 'fbox', 'makebox',
+            'centering', 'raggedright', 'raggedleft',
+            'hspace', 'vspace', 'hfill', 'vfill',
+            'newline', 'linebreak', 'newpage', 'clearpage',
+            'par', 'vskip', 'hskip', 'rule',
+            'addcontentsline', 'tableofcontents', 'listoffigures', 'listoftables',
+            'title', 'author', 'date', 'maketitle',
+            'pagestyle', 'thispagestyle', 'pagenumbering',
+            'footnote', 'marginpar', 'footnotemark', 'footnotetext',
+            'equation', 'eqnarray', 'align', 'gather', 'multline',
+            'frac', 'sqrt', 'sum', 'int', 'prod', 'lim',
+            'left', 'right', 'big', 'Big', 'bigg', 'Bigg',
+            'overbrace', 'underbrace', 'overline', 'underline',
+            'matrix', 'pmatrix', 'bmatrix', 'vmatrix', 'Vmatrix',
+            'cases', 'array', 'eqnarray', 'split',
+            'table', 'tabular', 'array', 'longtable',
+            'figure', 'minipage', 'parbox',
+            'verb', 'verbatim', 'lstlisting',
+            'url', 'href', 'nolinkurl',
+            'color', 'textcolor', 'colorbox', 'fcolorbox',
+            'makeatletter', 'makeatother',
+            'ifthenelse', 'whiledo',
+            'newcounter', 'setcounter', 'addtocounter', 'stepcounter',
+            'newlength', 'setlength', 'addtolength',
+            'newsavebox', 'savebox', 'usebox',
+            'newenvironment', 'renewenvironment',
+            'newcommand', 'renewcommand',
+            'providecommand', 'DeclareRobustCommand',
+            'hyphenation', 'sloppy', 'fussy',
+            'the', 'value', 'arabic', 'roman', 'Roman', 'alph', 'Alph',
+            'addtocontents', 'addcontentsline',
+            'appendix', 'appendixpage',
+            'index', 'glossary', 'nomenclature',
+            'makeindex', 'makeglossary',
+            'bibliography', 'bibliographystyle',
+            'cite', 'citep', 'citet', 'citeauthor', 'citeyear',
+            'addbibresource', 'printbibliography',
+            'index', 'glossary', 'nomenclature',
+            'makeindex', 'makeglossary',
+            'pagestyle', 'thispagestyle', 'pagenumbering',
+            'fancyhead', 'fancyfoot', 'fancypagestyle',
+            'hypersetup', 'urlstyle', 'urldef',
+            'captionof', 'caption', 'label', 'ref', 'pageref',
+            'includegraphics', 'graphicspath',
+            'tikzset', 'pgfkeys', 'pgfqkeys',
+            'draw', 'fill', 'shade', 'clip', 'scope',
+            'node', 'coordinate', 'path', 'pgfpath', 'pgfusepath',
+            'pgfpoint', 'pgfsetlinewidth', 'pgfsetdash',
+            'pgfsetcolor', 'pgfsetfillcolor',
+            'pgfsetarrows', 'pgfsetarrowoptions',
+            'pgfsetroundcap', 'pgfsetroundjoin',
+            'pgfsetmiterlimit', 'pgfsetlinejoin',
+            'pgfsetcapbutt', 'pgfsetcapround', 'pgfsetcaprect',
+            'pgfsetlinewidth', 'pgfsetdash',
+            'pgfsetfillcolor', 'pgfsetcolor',
+            'pgfsetarrows', 'pgfsetarrowoptions',
+            'pgfsetroundcap', 'pgfsetroundjoin',
+            'pgfsetmiterlimit', 'pgfsetlinejoin',
+            'pgfsetcapbutt', 'pgfsetcapround', 'pgfsetcaprect',
+            'nodepart', 'anchor', 'above', 'below', 'left', 'right',
+            'above left', 'above right', 'below left', 'below right',
+            'anchor', 'label', 'pin', 'edge', 'child', 'parent',
+            'foreach', 'let', 'pgfmathparse', 'pgfmathresult',
+            'pgfmathtruncatemacro', 'pgfmathsetmacro',
+            'pgfmathsetlength', 'pgfmathsetcount',
+            'pgfmathdeclaredim', 'pgfmathsetdim',
+            'pgfmathadd', 'pgfmathsubtract', 'pgfmathmultiply',
+            'pgfmathdivide', 'pgfmathmod', 'pgfmathpower',
+            'pgfmathsqrt', 'pgfmathabs', 'pgfmathround',
+            'pgfmathfloor', 'pgfmathceil', 'pgfmathint',
+            'pgfmathsetseed', 'pgfmathrandom',
+            'pgfmathrandominteger', 'pgfmathrandomuniform',
+            'pgfmathrandomnormal', 'pgfmathrandomsign',
+            'pgfmathrandomint', 'pgfmathrandomuniformint',
+            'pgfmathrandomnormalint', 'pgfmathrandomsignint',
+            'pgfmathdeclarefunction', 'pgfmathdeclarefunction*',
+            'pgfmathparse', 'pgfmathresult', 'pgfmathtruncatemacro',
+            'pgfmathsetmacro', 'pgfmathsetlength', 'pgfmathsetcount',
+            'pgfmathdeclaredim', 'pgfmathsetdim',
+            'pgfmathadd', 'pgfmathsubtract', 'pgfmathmultiply',
+            'pgfmathdivide', 'pgfmathmod', 'pgfmathpower',
+            'pgfmathsqrt', 'pgfmathabs', 'pgfmathround',
+            'pgfmathfloor', 'pgfmathceil', 'pgfmathint',
+            'pgfmathsetseed', 'pgfmathrandom',
+            'pgfmathrandominteger', 'pgfmathrandomuniform',
+            'pgfmathrandomnormal', 'pgfmathrandomsign',
+            'pgfmathrandomint', 'pgfmathrandomuniformint',
+            'pgfmathrandomnormalint', 'pgfmathrandomsignint',
+            'pgfmathdeclarefunction', 'pgfmathdeclarefunction*',
+        }
+        
+        # Filter out standard commands
+        undefined_commands = commands_used - standard_commands
+        
+        if not undefined_commands:
+            return ""
+        
+        # Generate command definitions
+        definitions = ["% Auto-generated command definitions"]
+        for cmd in sorted(undefined_commands):
+            # Simple default: just pass through with text formatting
+            # User can customize if needed
+            definitions.append(f"\\newcommand{{\\{cmd}}}[1]{{#1}}")
+        
+        return "\n".join(definitions)
 
 
 class MarkdownStrategy(OutputStrategy):
