@@ -118,6 +118,15 @@ class LaTeXStrategy(OutputStrategy):
         command_pattern = r'\\(\w+)(?=\{| |\n|$|\\|,|\.|;|:|\]|\)|!)'
         commands_used = set(re.findall(command_pattern, content))
         
+        # ALWAYS inject these common UML fixes (Safety Net)
+        # This fixes \attribute and \method errors even if regex misses them or AI uses them inconsistently
+        definitions = [
+            "% Safety net: Common AI hallucinated commands for UML diagrams",
+            r"\providecommand{\attribute}[1]{\textit{#1}}",  # Make attributes italic
+            r"\providecommand{\method}[1]{\texttt{#1}}",     # Make methods typewriter font
+            r"\providecommand{\classname}[1]{\textbf{#1}}",  # Make class names bold
+        ]
+        
         # Very basic commands that we know are standard (avoid redefining these)
         # Using providecommand makes this safer, but we filter these anyway
         basic_commands = {
@@ -138,19 +147,17 @@ class LaTeXStrategy(OutputStrategy):
             'matrix', 'pmatrix', 'bmatrix', 'table', 'tabular',
             'figure', 'verb', 'verbatim', 'color', 'textcolor',
             'makeatletter', 'makeatother',
+            'attribute', 'method', 'classname',  # Add these to ignore list so we don't define them twice
         }
         
         # Filter out basic commands (use providecommand so it won't redefine anyway)
         custom_commands = commands_used - basic_commands
         
-        if not custom_commands:
-            return ""
-        
-        # Generate command definitions using \providecommand (safer - won't redefine existing)
-        definitions = ["% Auto-generated command definitions (generic)"]
-        for cmd in sorted(custom_commands):
-            # Use providecommand - only defines if not already defined
-            definitions.append(f"\\providecommand{{\\{cmd}}}[1]{{#1}}")
+        if custom_commands:
+            definitions.append("% Auto-generated command definitions (generic)")
+            for cmd in sorted(custom_commands):
+                # Use providecommand - only defines if not already defined
+                definitions.append(f"\\providecommand{{\\{cmd}}}[1]{{#1}}")
         
         return "\n".join(definitions)
 
