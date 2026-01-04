@@ -1,0 +1,157 @@
+"""
+Facade Pattern - ConverterFacade hides complexity from user.
+"""
+
+import os
+from typing import List, Dict, Any, Tuple
+from concurrent.futures import ThreadPoolExecutor, as_completed
+from pathlib import Path
+
+from core.factories import ModelFactory
+from core.strategies import LaTeXStrategy
+from services.pdf_processor import ImageLoader
+from services.output_builder import LaTeXBuilder
+from services.latex_compiler import LaTeXCompiler
+from core.interfaces import ICodeGenerator, IImageLoader, IOutputBuilder
+
+
+class ConverterFacade:
+    """Facade for converting PDF/images to LaTeX/PDF."""
+    
+    def __init__(self, model_type: str = "gemini-flash", max_workers: int = 4):
+        """
+        Initialize converter facade.
+        
+        Args:
+            model_type: Type of model to use (default: "gemini-flash")
+            max_workers: Maximum number of parallel workers (default: 4)
+        """
+        self.model: ICodeGenerator = ModelFactory.get_model(model_type)
+        self.image_loader: IImageLoader = ImageLoader()
+        self.output_builder: IOutputBuilder = LaTeXBuilder()
+        self.latex_compiler = LaTeXCompiler()
+        self.strategy = LaTeXStrategy()
+        self.max_workers = max_workers
+    
+    def convert(self, file_path: str | List[str], output_format: str = "latex") -> Tuple[str, str]:
+        """
+        Convert PDF/images to LaTeX and compiled PDF.
+        
+        Args:
+            file_path: Path to PDF/single image, or list of image paths for batch
+            output_format: Output format (default: "latex")
+            
+        Returns:
+            Tuple of (latex_file_path, pdf_file_path)
+        """
+        # Load images
+        image_data = self.image_loader.load_images(file_path)
+        
+        # Process images (parallel for multiple, single for one)
+        if len(image_data) > 1:
+            results = self._process_parallel(image_data)
+        else:
+            results = self._process_single(image_data[0])
+            results = [results]
+        
+        # ⚠️ CRITICAL: Sort results by index to maintain correct order
+        # Threads finish asynchronously - Page 2 might finish before Page 1
+        if len(results) > 1:
+            # Determine sort key based on type
+            if results[0].get('type') == 'pdf_page':
+                results.sort(key=lambda x: x.get('page_num', 0) or 0)
+            elif results[0].get('type') in ['batch_image', 'single_image']:
+                results.sort(key=lambda x: x.get('image_index', 0) or 0)
+        
+        # Combine all LaTeX code
+        latex_contents = []
+        for result in results:
+            latex_contents.append(result['latex_code'])
+        
+        combined_latex = "\n\n".join(latex_contents)
+        
+        # Format using strategy
+        formatted_latex = self.strategy.format_output(combined_latex)
+        
+        # Build output file
+        output_dir = Path("output")
+        output_dir.mkdir(exist_ok=True)
+        
+        # Determine output filename
+        if isinstance(file_path, list):
+            base_name = "batch_output"
+        else:
+            base_name = Path(file_path).stem
+        
+        latex_file_path = self.output_builder.build_output(
+            formatted_latex,
+            str(output_dir / f"{base_name}.tex")
+        )
+        
+        # Compile to PDF
+        pdf_file_path = self.latex_compiler.compile(latex_file_path)
+        
+        return (latex_file_path, pdf_file_path)
+    
+    def _process_single(self, image_data: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Process a single image.
+        
+        Args:
+            image_data: Dictionary with image path and metadata
+            
+        Returns:
+            Dictionary with LaTeX code and metadata
+        """
+        image_path = image_data['path']
+        index = image_data['index']
+        img_type = image_data['type']
+        
+        # Generate LaTeX code
+        latex_code = self.model.generate_code(image_path)
+        
+        return {
+            'latex_code': latex_code,
+            'page_num': index if img_type == 'pdf_page' else None,
+            'image_index': index if img_type != 'pdf_page' else None,
+            'type': img_type
+        }
+    
+    def _process_parallel(self, image_data_list: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+        """
+        Process multiple images in parallel.
+        
+        Args:
+            image_data_list: List of dictionaries with image paths and metadata
+            
+        Returns:
+            List of dictionaries with LaTeX code and metadata
+        """
+        results = []
+        
+        with ThreadPoolExecutor(max_workers=self.max_workers) as executor:
+            # Submit all tasks
+            future_to_data = {
+                executor.submit(self._process_single, img_data): img_data
+                for img_data in image_data_list
+            }
+            
+            # Collect results as they complete
+            for future in as_completed(future_to_data):
+                try:
+                    result = future.result()
+                    results.append(result)
+                except Exception as e:
+                    # Log error but continue with other images
+                    img_data = future_to_data[future]
+                    print(f"Error processing {img_data['path']}: {str(e)}")
+                    # Add error result to maintain indexing
+                    results.append({
+                        'latex_code': f"% Error processing image: {str(e)}",
+                        'page_num': img_data.get('index') if img_data.get('type') == 'pdf_page' else None,
+                        'image_index': img_data.get('index') if img_data.get('type') != 'pdf_page' else None,
+                        'type': img_data.get('type', 'unknown')
+                    })
+        
+        return results
+
