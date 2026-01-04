@@ -50,11 +50,16 @@ class GeminiService(ICodeGenerator):
         prompt = """Convert this image to LaTeX code. 
 
 IMPORTANT RULES:
-1. Use ONLY standard LaTeX packages: amsmath, amssymb, amsthm, geometry, graphicx
-2. DO NOT use packages like: capt-of, fancyhdr, hyperref, or any other non-standard packages
-3. Use basic LaTeX commands only (no custom packages)
-4. If a sentence seems incomplete at the start or end, just transcribe it as is.
-5. Return only the LaTeX code without any explanations, markdown formatting, or \\documentclass/\\begin{document} tags (just the content)."""
+1. For UML Class Diagrams: Use TikZ package with tikzpicture environment. Draw rectangles with multipart nodes for classes (class name, attributes, methods), and arrows with open triangle heads for inheritance.
+2. For mathematical equations: Use standard math environments (equation, align, etc.)
+3. For tables: Use tabular or array environments
+4. For figures/diagrams: Use TikZ if it's a diagram, or includegraphics if it's an image
+5. For question headers: Use tight spacing with rules above and below
+6. For captions: Use \captionof{figure}{...} or \caption{...} inside figure environment, italicize and center
+7. ALLOWED packages: amsmath, amssymb, amsthm, geometry, graphicx, tikz, pgf
+8. AVOID packages: capt-of, fancyhdr, hyperref (unless necessary), or other non-standard packages
+9. If a sentence seems incomplete at the start or end, just transcribe it as is.
+10. Return only the LaTeX code without explanations, markdown formatting, or \\documentclass/\\begin{document} tags (just the content)."""
         
         for attempt in range(self.max_retries):
             try:

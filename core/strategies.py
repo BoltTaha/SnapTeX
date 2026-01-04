@@ -33,10 +33,18 @@ class LaTeXStrategy(OutputStrategy):
         
         # Wrap content in basic LaTeX document structure if not already wrapped
         if not cleaned_content.strip().startswith("\\documentclass"):
+            # Check if TikZ is needed (tikzpicture or tikz in content)
+            uses_tikz = 'tikzpicture' in cleaned_content.lower() or '\\tikz' in cleaned_content
+            
             latex_doc = f"""\\documentclass{{article}}
 \\usepackage{{amsmath}}
 \\usepackage{{amssymb}}
-\\usepackage{{graphicx}}
+\\usepackage{{graphicx}}"""
+            
+            if uses_tikz:
+                latex_doc += "\n\\usepackage{tikz}\n\\usetikzlibrary{shapes,arrows,positioning}"
+            
+            latex_doc += f"""
 \\begin{{document}}
 
 {cleaned_content}
@@ -62,7 +70,8 @@ class LaTeXStrategy(OutputStrategy):
         # Allowed packages (standard, commonly available)
         allowed_packages = {
             'amsmath', 'amssymb', 'amsthm', 'graphicx', 'geometry', 
-            'inputenc', 'fontenc', 'babel', 'xcolor', 'listings'
+            'inputenc', 'fontenc', 'babel', 'xcolor', 'listings',
+            'tikz', 'pgf', 'pgfplots', 'array', 'tabularx', 'booktabs'
         }
         
         for line in lines:
@@ -78,9 +87,9 @@ class LaTeXStrategy(OutputStrategy):
                 # If not allowed package, skip this line
                 if not package_used:
                     continue
-            # Remove problematic commands that require missing packages
-            elif any(cmd in line for cmd in ['\\captionof', '\\fancyhead', '\\hypersetup']):
-                # Skip lines with problematic commands
+            # Remove problematic commands that require missing packages (but allow captionof)
+            elif any(cmd in line for cmd in ['\\fancyhead', '\\hypersetup']):
+                # Skip lines with problematic commands (but allow \captionof)
                 continue
             else:
                 cleaned_lines.append(line)
