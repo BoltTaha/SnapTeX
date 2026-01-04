@@ -87,7 +87,7 @@ def main():
             file_input = saved_paths
         
         # Process button
-        if st.button("🚀 Convert to LaTeX", type="primary", use_container_width=True):
+        if st.button("Convert to LaTeX", type="primary", use_container_width=True):
             try:
                 # Get unique session ID for temp folder isolation
                 unique_id = st.session_state.session_id

@@ -1,4 +1,4 @@
-# SnapTeX 📸➡️📝
+# SnapTeX
 
 > **Turn Chaos into Code.** Instantly convert handwritten notes, equations, and diagrams into clean, compilable LaTeX & PDF documents using AI.
 
@@ -9,25 +9,25 @@
 
 ---
 
-## 🚀 What is SnapTeX?
+## What is SnapTeX?
 
 **SnapTeX** is an intelligent digitization tool designed for students and researchers. Unlike standard OCR tools that just copy text, SnapTeX **understands context**. It takes your messy handwritten notes (PDFs or Images) and transforms them into professional, structured **LaTeX code**.
 
 Whether it's a complex **UML Class Diagram**, a messy **Calculus equation**, or a full page of text, SnapTeX digitizes it in seconds.
 
-### ✨ Key Features
+### Key Features
 
-- **📚 Bulk Processing Engine:** Upload an entire 50-page PDF notebook, and SnapTeX processes all pages in parallel using multi-threading.
-- **🧠 Intelligent Correction:** AI automatically fixes handwriting errors (e.g., correcting "Pythogoras" to "Pythagoras") and closes unclosed brackets in math equations.
-- **📊 Diagram to Code:** Converts hand-drawn sketches (Flowcharts, UML) directly into **TikZ** code.
-- **⚡ High-Speed Architecture:** Built with a parallel processing pipeline that respects API rate limits while maximizing throughput.
-- **🛡️ Session Isolation:** Fully supports multiple concurrent users with isolated temporary storage (no file collisions).
-- **🔄 Multiple Input Formats:** Supports PDF files, single images (JPEG, PNG), or batch image processing.
-- **📄 LaTeX & PDF Output:** Generates both `.tex` source code and compiled `.pdf` files.
+- **Bulk Processing Engine:** Upload an entire 50-page PDF notebook, and SnapTeX processes all pages in parallel using multi-threading.
+- **Intelligent Correction:** AI automatically fixes handwriting errors (e.g., correcting "Pythogoras" to "Pythagoras") and closes unclosed brackets in math equations.
+- **Diagram to Code:** Converts hand-drawn sketches (Flowcharts, UML) directly into **TikZ** code.
+- **High-Speed Architecture:** Built with a parallel processing pipeline that respects API rate limits while maximizing throughput.
+- **Session Isolation:** Fully supports multiple concurrent users with isolated temporary storage (no file collisions).
+- **Multiple Input Formats:** Supports PDF files, single images (JPEG, PNG), or batch image processing.
+- **LaTeX & PDF Output:** Generates both `.tex` source code and compiled `.pdf` files.
 
 ---
 
-## 🏗️ Engineering & Architecture
+## Engineering & Architecture
 
 SnapTeX is built with **Scalability** and **Maintainability** in mind, strictly following **SOLID Principles** and standard **Design Patterns**:
 
@@ -39,7 +39,7 @@ SnapTeX is built with **Scalability** and **Maintainability** in mind, strictly 
 | **SRP (SOLID)** | `Service Layer` | Each service (PDF Processing, API Call, File Saving) handles exactly one responsibility. |
 | **DIP (SOLID)** | `Interfaces` | High-level modules depend on abstractions (ICodeGenerator, IImageLoader), not concrete implementations. |
 
-### 📁 Project Structure
+### Project Structure
 
 ```
 SnapTeX/
@@ -64,7 +64,7 @@ SnapTeX/
 
 ---
 
-## 🛠️ Installation Guide
+## Installation Guide
 
 ### Prerequisites
 
@@ -96,7 +96,7 @@ pip install -r requirements.txt
 
 ### Step 2: System Dependencies
 
-#### 🪟 Windows Users
+#### Windows Users
 
 **1. Install Poppler:**
 - Download from [Poppler Releases](https://github.com/oschwartz10612/poppler-windows/releases)
@@ -111,7 +111,7 @@ pip install -r requirements.txt
 - Restart your terminal after installation
 - Verify: Run `pdflatex --version` in terminal
 
-#### 🐧 Linux Users
+#### Linux Users
 
 ```bash
 # Ubuntu/Debian
@@ -125,7 +125,7 @@ pdftoppm -h
 pdflatex --version
 ```
 
-#### 🍎 macOS Users
+#### macOS Users
 
 ```bash
 # Using Homebrew
@@ -161,7 +161,7 @@ pdflatex --version
 
 ---
 
-## 🏃‍♂️ How to Run
+## How to Run
 
 Launch the application with one command:
 
@@ -177,21 +177,17 @@ The application will start and open in your browser at `http://localhost:8501`.
    - Drag & drop your PDF file, single image (JPEG, PNG), or multiple images
    - Supported formats: PDF, JPEG, PNG
 
-2. **Select Model:**
-   - Choose **Gemini 2.5 Flash** for speed (recommended for most cases)
-   - Choose **Gemini 2.5 Pro** for complex handwriting or diagrams (slower but more accurate)
-
-3. **Convert:**
-   - Click the "🚀 Convert to LaTeX" button
+2. **Convert:**
+   - Click the "Convert to LaTeX" button
    - Wait for processing (progress will be shown)
 
-4. **Download:**
+3. **Download:**
    - Download the `.tex` source code file
    - Download the compiled `.pdf` file (if TeX Live/MiKTeX is installed)
 
 ---
 
-## 🐞 Troubleshooting
+## Troubleshooting
 
 ### Error: `Poppler is not installed or not in PATH`
 
@@ -237,7 +233,7 @@ The application will start and open in your browser at `http://localhost:8501`.
 
 ---
 
-## 🚀 Features in Detail
+## Features in Detail
 
 ### Bulk Processing
 Process entire PDFs with multiple pages simultaneously. SnapTeX uses parallel processing to handle multiple pages concurrently, significantly reducing processing time.
@@ -260,7 +256,7 @@ Each user session has isolated temporary storage, preventing file collisions in 
 
 ---
 
-## 📚 Technology Stack
+## Technology Stack
 
 - **Frontend:** Streamlit (Python web framework)
 - **AI/ML:** Google Gemini 2.5 (Flash & Pro models)
@@ -271,7 +267,7 @@ Each user session has isolated temporary storage, preventing file collisions in 
 
 ---
 
-## 🔒 License
+## License
 
 **© 2026 SnapTeX. All Rights Reserved.**
 
@@ -279,19 +275,19 @@ This project is proprietary software. Unauthorized copying, modification, distri
 
 ---
 
-## 👨‍💻 Author
+## Author
 
 Built with ❤️ by a CS Student @ FAST
 
 ---
 
-## 🤝 Contributing
+## Contributing
 
 This is a proprietary project. Contributions are not currently accepted. However, suggestions and feedback are welcome!
 
 ---
 
-## 📝 Changelog
+## Changelog
 
 ### Version 1.0.0 (2026)
 - Initial release
@@ -304,4 +300,4 @@ This is a proprietary project. Contributions are not currently accepted. However
 
 ---
 
-**Happy Converting! 🚀**
+**Happy Converting!**
