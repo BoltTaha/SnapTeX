@@ -99,7 +99,7 @@ class LaTeXStrategy(OutputStrategy):
         """
         Dynamically detect undefined commands in LaTeX content and define them.
         Generic approach - works for any LaTeX content, automatically adapts.
-        Uses \providecommand so it won't redefine existing commands.
+        Uses \\providecommand so it won't redefine existing commands.
         
         Args:
             content: LaTeX content to analyze
