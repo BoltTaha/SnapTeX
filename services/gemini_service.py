@@ -52,7 +52,8 @@ class GeminiService(ICodeGenerator):
 IMPORTANT RULES:
 1. For UML Class Diagrams: Use TikZ package with tikzpicture environment.
    - Use pre-defined styles: [class] for regular classes and [abstract] for abstract classes (do NOT redefine these styles).
-   - Node style: Use \\node [class] ... (the class style is already defined globally).
+   - Node style: Use \\node [class] ... (the class style is already defined globally in the preamble).
+   - IMPORTANT: Do NOT define \\tikzset styles inside the document. Assume standard styles class, abstract, and inheritance are already defined in the preamble. Just use them like \\node [class] ....
    - IMPORTANT: Do NOT use custom commands like \\attribute or \\method inside the node parts. Just use plain text or standard formatting like \\textbf{} / \\textit{}.
    - Use \\nodepart{two} for attributes and \\nodepart{three} for methods.
    - For inheritance arrows: Use pre-defined [inheritance] style. Prefer connecting child nodes to the south anchor of the parent node (e.g., (Child.north) -- (Parent.south)) for cleaner UML diagrams.

@@ -171,6 +171,8 @@ class LaTeXStrategy(OutputStrategy):
             'attribute', 'method', 'classname',  # Add these to ignore list so we don't define them twice
             'geometry', 'hfill', 'vfill', 'hrule', 'noindent',  # Standard LaTeX formatting commands
             'bfseries', 'itshape', 'ttfamily',  # Standard LaTeX font commands
+            'tikzset', 'pgfkeysvalueof', 'sffamily', 'textbullet',  # TikZ/PGF and standard font commands
+            # Note: 'node', 'draw', 'fill', 'path', 'coordinate' already in basic_commands above
         }
         
         # Filter out basic commands (use providecommand so it won't redefine anyway)
