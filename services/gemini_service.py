@@ -70,6 +70,9 @@ Return only the LaTeX code without any explanations or markdown formatting."""
                     latex_code = "\n".join(lines[1:-1]) if len(lines) > 2 else latex_code
                     latex_code = latex_code.replace("```latex", "").replace("```", "").strip()
                 
+                # Free tier safe rakhne ke liye 2 second ka break (rate limiting)
+                time.sleep(2)
+                
                 return latex_code
                 
             except Exception as e:
