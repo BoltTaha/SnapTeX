@@ -65,44 +65,34 @@ class LaTeXStrategy(OutputStrategy):
     def _clean_latex_content(self, content: str) -> str:
         """
         Clean LaTeX content by removing problematic packages and commands.
+        Separates preamble from body content.
         
         Args:
             content: Raw LaTeX content
             
         Returns:
-            Cleaned LaTeX content
+            Cleaned LaTeX content (body only, no preamble)
         """
         lines = content.split('\n')
-        cleaned_lines = []
-        
-        # Allowed packages (standard, commonly available)
-        allowed_packages = {
-            'amsmath', 'amssymb', 'amsthm', 'graphicx', 'geometry', 
-            'inputenc', 'fontenc', 'babel', 'xcolor', 'listings',
-            'tikz', 'pgf', 'pgfplots', 'array', 'tabularx', 'booktabs'
-        }
+        body_lines = []
         
         for line in lines:
-            # Remove problematic usepackage commands
-            if '\\usepackage' in line.lower():
-                # Check if it's an allowed package
-                package_used = False
-                for pkg in allowed_packages:
-                    if pkg in line.lower():
-                        cleaned_lines.append(line)
-                        package_used = True
-                        break
-                # If not allowed package, skip this line
-                if not package_used:
-                    continue
-            # Remove problematic commands that require missing packages (but allow captionof)
-            elif any(cmd in line for cmd in ['\\fancyhead', '\\hypersetup']):
-                # Skip lines with problematic commands (but allow \captionof)
+            # Skip documentclass, usepackage, usetikzlibrary, and other preamble commands
+            if any(cmd in line.lower() for cmd in ['\\documentclass', '\\usepackage', '\\usetikzlibrary', '\\newcommand', '\\newcommand']):
+                continue  # Skip preamble commands - we add them separately in format_output
+            
+            # Skip begin/end document if present (we add our own)
+            if '\\begin{document}' in line.lower() or '\\end{document}' in line.lower():
                 continue
-            else:
-                cleaned_lines.append(line)
+            
+            # Remove problematic commands that require missing packages
+            if any(cmd in line for cmd in ['\\fancyhead', '\\hypersetup']):
+                continue
+            
+            # Add all other lines to body
+            body_lines.append(line)
         
-        return '\n'.join(cleaned_lines)
+        return '\n'.join(body_lines)
 
 
 class MarkdownStrategy(OutputStrategy):
