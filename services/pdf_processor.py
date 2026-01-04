@@ -4,7 +4,6 @@ Single Responsibility: ONLY loads images from PDF, single images, or batch image
 """
 
 import os
-import time
 from typing import List, Dict, Any
 from pathlib import Path
 from pdf2image import convert_from_path
