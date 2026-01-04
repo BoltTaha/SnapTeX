@@ -4,7 +4,7 @@ Facade Pattern - ConverterFacade hides complexity from user.
 
 import os
 import time
-from typing import List, Dict, Any, Tuple
+from typing import List, Dict, Any, Tuple, Optional
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 
