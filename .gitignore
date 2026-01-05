@@ -16,8 +16,11 @@ dist/
 
 # Temporary files
 temp_images/
+temp_images_*/
 temp_uploads/
+temp_uploads_*/
 output/
+output_*/
 *.aux
 *.log
 *.out
