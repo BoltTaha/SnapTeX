@@ -39,4 +39,7 @@ Thumbs.db
 # Streamlit
 .streamlit/
 
+# Cursor IDE
+.cursor/
+
 
