@@ -1,0 +1,151 @@
+\documentclass{article}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+\usepackage{mathrsfs}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage[margin=1in]{geometry}
+\usepackage{tikz}
+\usetikzlibrary{shapes.multipart, arrows.meta, positioning}
+\tikzset{
+    class/.style={
+        rectangle split, 
+        rectangle split parts=3, 
+        draw, 
+        align=left, 
+        text width=4cm,
+        font=\small
+    },
+    abstract/.style={
+        class,
+        font=\itshape
+    },
+    inheritance/.style={
+        -{Triangle[open]}, 
+        thick
+    }
+}
+% Safety net: Common AI hallucinated commands for UML diagrams
+\providecommand{\attribute}[1]{\textit{#1}}
+\providecommand{\method}[1]{\texttt{#1}}
+\providecommand{\classname}[1]{\textbf{#1}}
+% Auto-generated command definitions (generic)
+\providecommand{\hline}[1]{#1}
+\begin{document}
+
+\begin{figure}[h!]
+    \centering
+    \begin{tikzpicture}[
+        % Assuming 'class', 'abstract', 'inheritance' styles are predefined in the preamble.
+    ]
+        % Transaction (Abstract Class)
+        \node (Transaction) [abstract] {
+            \textbf{Transaction}
+            \nodepart{two}
+            - accountNumber: Integer
+            \nodepart{three}
+            + getAccountNumber() \\
+            + \textit{execute}()
+        };
+
+        % BalanceInquiry (Concrete Class)
+        \node (BalanceInquiry) [class, below left=1.5cm and 0.5cm of Transaction] {
+            \textbf{BalanceInquiry}
+            \nodepart{two}
+            \nodepart{three}
+            + execute()
+        };
+
+        % Withdrawal (Concrete Class)
+        \node (Withdrawal) [class, below=1.5cm of Transaction] {
+            \textbf{Withdrawal}
+            \nodepart{two}
+            - amount: Double
+            \nodepart{three}
+            + execute()
+        };
+
+        % Deposit (Concrete Class)
+        \node (Deposit) [class, below right=1.5cm and 0.5cm of Transaction] {
+            \textbf{Deposit}
+            \nodepart{two}
+            - amount: Double
+            \nodepart{three}
+            + execute()
+        };
+
+        % Inheritance arrows
+        \draw [inheritance] (BalanceInquiry.north) -- (Transaction.south);
+        \draw [inheritance] (Withdrawal.north) -- (Transaction.south);
+        \draw [inheritance] (Deposit.north) -- (Transaction.south);
+
+    \end{tikzpicture}
+    \caption{\textit{Figure 2 Class Diagram}}
+    \label{fig:class_diagram}
+\end{figure}
+
+\vspace{0.5em}
+
+\begin{itemize}
+    \item Your task is to write a java code by using Factory Design Pattern for the delegation of object creation to achieve loose coupling.
+\end{itemize}
+\textit{Note: You may make your own intuition about methods/functions.}
+
+\vspace{1em}
+\rule{\linewidth}{0.4pt}
+\vspace{-0.5em}
+\noindent\textbf{Question \# 6: CLO-4}
+\hfill
+\begin{tabular}{|c|c|}
+    \hline
+    \textbf{Marks: [10]} & \textbf{Time: [15 mins]} \\
+    \hline
+\end{tabular}
+\vspace{-0.5em}
+\rule{\linewidth}{0.4pt}
+\vspace{0.5em}
+
+Singleton Design Pattern ensures that there is only one instance of a class and provides a global point of access to it. Consider the scenario of an ATM transaction given in \textbf{Question \# 5}and write a java code to restrict the creation of multiple instances of transaction class.
+
+\vspace{1em}
+\rule{\linewidth}{0.4pt}
+\vspace{-0.5em}
+\noindent\textbf{Question \# 7: CLO-5}
+\hfill
+\begin{tabular}{|c|c|}
+    \hline
+    \textbf{Marks: [10]} & \textbf{Time: [15 mins]} \\
+    \hline
+\end{tabular}
+\vspace{-0.5em}
+\rule{\linewidth}{0.4pt}
+\vspace{0.5em}
+
+\textbf{Fire Alarming System:} The owner of a large multi-stored building wants to have a computerized fire alarm system for his building. Smoke detectors and fire alarms would be placed in each room of the building. The fire alarm system would monitor the status of these smoke detectors. Whenever a fire condition is reported by any of the smoke detectors, the fire alarm system should determine the location at which the fire condition is reported by any of the smoke detectors, and then sound the alarms only in the neighboring locations. The fire alarm system should also flash an alarm message on the computer console.
+\begin{itemize}
+    \item Design an architecture based on an event-driven style.
+\end{itemize}
+
+\vspace{1em}
+\rule{\linewidth}{0.4pt}
+\vspace{-0.5em}
+\noindent\textbf{Question \# 8: CLO-5}
+\hfill
+\begin{tabular}{|c|c|}
+    \hline
+    \textbf{Marks: [10]} & \textbf{Time: [15 mins]} \\
+    \hline
+\end{tabular}
+\vspace{-0.5em}
+\rule{\linewidth}{0.4pt}
+\vspace{0.5em}
+
+\begin{itemize}
+    \item Discuss microservices architecture by comparing it with a monolithic architectural approach.
+\end{itemize}
+
+\vspace{2em}
+\centering\textbf{GOOD LUCK!}
+
+\end{document}
