@@ -5,7 +5,7 @@
 [![Python](https://img.shields.io/badge/Python-3.8%2B-blue?style=for-the-badge&logo=python)](https://www.python.org/)
 [![Streamlit](https://img.shields.io/badge/Frontend-Streamlit-red?style=for-the-badge&logo=streamlit)](https://streamlit.io/)
 [![Gemini AI](https://img.shields.io/badge/AI-Gemini%202.5-purple?style=for-the-badge)](https://ai.google.dev/)
-[![License](https://img.shields.io/badge/License-Proprietary-orange?style=for-the-badge)](LICENSE)
+[![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE)
 
 ---
 
@@ -269,9 +269,27 @@ Each user session has isolated temporary storage, preventing file collisions in 
 
 ## License
 
-**© 2026 SnapTeX. All Rights Reserved.**
+MIT License
 
-This project is proprietary software. Unauthorized copying, modification, distribution, or use of this source code is strictly prohibited.
+Copyright (c) 2026 SnapTeX
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
 
 ---
 
@@ -283,7 +301,10 @@ Built with ❤️ by a CS Student @ FAST
 
 ## Contributing
 
-This is a proprietary project. Contributions are not currently accepted. However, suggestions and feedback are welcome!
+Contributions are welcome! This is an open-source project. Feel free to:
+- Open issues for bugs or feature requests
+- Submit pull requests with improvements
+- Share feedback and suggestions
 
 ---
 
